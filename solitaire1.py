@@ -22,7 +22,7 @@ for n in range(0,7):
 stock = {}
 
 
-for n in range(0,21):
+for n in range(deck.cards_left()):
     stock[n] = deck.deal()
     stock[n].set_hidden()
 
@@ -35,20 +35,57 @@ for n in range(0,4):
 
 print('\n',foundation)
 
-rank = input('Choose a card rank. 1-13 ')
-suit = input('Choose its suit. ')
 
+while True:
+    rank = input('Choose a card rank. A-K ')
+    suit = input('Choose its suit. ')
+    where = input('What column is it in? Enter 0-6. ')
+    put = input('Where should it go. Enter 0-6. ')
+    
+    
+    if rank == 'J' or rank == 'Q' or rank == 'K' or rank == 'A':
+        card_type = cards.Card(rank,suit)
+        rank = int(card_type.get_rank())
+    else:
+        rank = int(rank)
+        card_type = cards.Card(rank,suit)
+        rank = int(card_type.get_rank())
+    print(rank)
+    
+    while True:
+        if card_type.has_same_color(tableau[int(put)][0]) == False \
+        and int(tableau[int(put)][0].get_rank()) - rank == 1:
+            break
+        else:
+            print('Illegal move')
+            rank = input('Choose a card rank. A-K ')
+            suit = input('Choose its suit. ')
+            where = input('What column is it in? Enter 0-6. ')
+            put = input('Where should it go. Enter 0-6. ')
+    
+    still_working = True
+    for column in tableau.values():
+        if still_working == True:
+            for card in column:    
+                if rank == int(card.get_rank()) and suit == card.get_suit():
+                    tableau[int(put)].insert(0,card)
+                    tableau[int(where)].remove(card)
+                    still_working = False
+                    break
+        else:
+            break
+    
+    for v in tableau.values():
+        if len(v) == 2 or len(v) == 1:
+            tableau[int(where)][0].show_card()
+        print(v)            
+    
+    choice = input('Choose another? Y/N ') 
+    if choice in 'Y':      
+        continue
+    else:
+        break
 
-where = input('What column is it in and which position? Enter 0-6. ')
-put = input('Where should it go. Enter 0-6. ')
-card_type = cards.Card(rank,suit)
-
-for v in tableau.values():       
-    for card in v:
-        if card_type.get_rank() == card.get_rank() and card_type.get_suit() == card.get_suit():
-            tableau[int(put)].insert(0,card_type)
-
-print(tableau)
             
              
 
